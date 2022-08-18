@@ -1,10 +1,14 @@
 const express = require("express");
 const cors = require("cors");
-const routesUsers = require("../routes/user.js");
+const routesUsers = require("../routes/users.js");
 const routesProducts = require("../routes/products.js");
 const routesCarts = require("../routes/carts.js");
 const routesAuth = require("../routes/auth.js");
 const morgan = require("morgan");
+const session = require("express-session");
+const sessionFilestore  = require("session-file-store")
+
+const fileStore = sessionFilestore(session)
 
 const { dbConnection } = require("../database/config.js");
 
@@ -44,6 +48,9 @@ class Server {
     this.app.use(morgan("dev"));
     //urlenconded express
     this.app.use(express.urlencoded({ extended: true }));
+   
+  
+
   }
 
   routes() {

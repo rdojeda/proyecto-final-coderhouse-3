@@ -46,8 +46,7 @@ const UserSchema = Schema({
 
   role: {
     type: String,
-    enum: ["ADMIN_ROLE", "USER_ROLE", "VENTAS_ROLE"],
-    required: true,
+    enum: ["ADMIN_ROLE", "USER_ROLE", "VENTAS_ROLE"]
   },
 
   google: {

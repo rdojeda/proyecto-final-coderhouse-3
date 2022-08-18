@@ -2,6 +2,23 @@ const User = require("../models/user.js");
 const bcryptjs = require("bcryptjs");
 const { generarJWT } = require("../helpers/generar-jwt.js");
 
+//Registración de usuario
+
+const register = async (req, res) => {
+  // leer los datos del usuario y colocarlos en Usuarios
+  const user = new User(req.body);
+  user.password = await bcrypt.hash(req.body.password, 12);
+  try {
+    await user.save();
+    res.json({ mensaje: "Usuario Creado Correctamente" });
+    //Enviar correo
+  } catch (error) {
+    console.log(error);
+    res.json({ mensaje: "Hubo un error" });
+  }
+};
+
+//Login de usuario
 const login = async (req, res) => {
   const { email, password } = req.body;
 
@@ -45,4 +62,5 @@ const login = async (req, res) => {
 
 module.exports = {
   login,
+  register,
 };
