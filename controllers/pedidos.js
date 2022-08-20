@@ -1,4 +1,6 @@
 const Pedidos = require("../models/pedido");
+const twilio = require('twilio')
+const nodemailer = require('nodemailer');
 
 //Agrega nuevo Pedido 
 const nuevoPedido = async (req, res, next) => {
@@ -6,6 +8,50 @@ const nuevoPedido = async (req, res, next) => {
   try {
     await pedido.save();
     res.json({ mensaje: "Se agregó un nuevo pedido" });
+    // Correo desde Ethereal
+      const transporter = nodemailer.createTransport({
+        host: "smtp.ethereal.email",
+        port: 587,
+        auth: {
+          user: process.env.USER_ETHEREAL_MAIL,
+          pass: process.env.PASS_ETHEREAL_MAIL,
+        },
+      });
+      await transporter.sendMail({
+        from: "Site Web - Nuevo Pedido",
+        to: process.env.USER_ETHEREAL_MAIL,
+        subject: "Nuevo Pedido",
+        html: `
+        <h1>Este es un Correo de Prueba</h1>
+        <p>Recibimos un nuevo pedido prueba Ethereal</p>
+        <h2>Datos del cliente</h2>
+        <p>nombre: Roberto Ojeda </p>
+        <p>email: roberto@correo.com</p>
+        <hr>
+        <h2>Domicilio de envio</h2>
+        <p>Calle 0000 - Piso 00 - Dto 0</p>
+        <p>CABA</p>
+        <hr>
+        <h2>Producto</h2>
+        <p>Remera Nike </p>
+        <p>Remera Nike SportWear</p>
+        <p>Cantidad: 1 </p>
+        <p>Precio $ 1000 </p>
+      `,
+      });
+    
+    //Mensaje desde Twilio
+    const twilioAccount = twilio('AC5fff22849d9c43978013ed6c999d6cea', '1ad6f5ed203a66d0d2250f342a0dd90c');
+    
+    twilioAccount.messages.create({
+      body: "Recibimos un Nuevo Pedido",
+      from: "+12517147842",
+      to: "+541138730192",
+    
+    
+    });
+
+
   } catch (error) {
     console.log(error);
     next();
