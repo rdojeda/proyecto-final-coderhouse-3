@@ -17,20 +17,20 @@ const register = async (req, res) => {
       host: "smtp.ethereal.email",
       port: 587,
       auth: {
-        user: "jabari.mayert11@ethereal.email",
-        pass: "G7x6Jd3UmkVHz2cMuQ",
+        user: process.env.USER_ETHEREAL_MAIL,
+        pass: process.env.PASS_ETHEREAL_MAIL,
       },
     });
     await transporter.sendMail({
       from: "Site Web - Aviso Nuevo Registro",
-      to: "jabari.mayert11@ethereal.email",
+      to: process.env.USER_ETHEREAL_MAIL,
       subject: "Nuevo Registro",
       html: `
         <h1>Primer Correo</h1>
         <p>Bienvenido, este es una prueba Ethereal</p>
         <p>nombre ${name}</p>
         <p>email: ${email}</p>
-        <p>passwrd: ${password}</p>
+        <p>password: ${password}</p>
         <p>role: ${role}</p>
       `,
     });
