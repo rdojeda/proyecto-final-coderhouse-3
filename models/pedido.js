@@ -1,6 +1,6 @@
 const { Schema, model } = require("mongoose");
 
-const pedidosSchema = new Schema({
+const pedidoSchema = new Schema({
   cliente: {
     type: Schema.ObjectId,
     ref: "Clientes",
@@ -19,10 +19,10 @@ const pedidosSchema = new Schema({
   },
 });
 
-PedidoSchema.methods.toJSON = function () {
+pedidoSchema.methods.toJSON = function () {
   const { __v, _id, ...pedido } = this.toObject();
   pedido.uid = _id;
   return pedido;
 };
 
-module.exports = mongoose.model("Pedidos", pedidosSchema);
+module.exports = model("Pedido", pedidoSchema);

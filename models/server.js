@@ -4,11 +4,13 @@ const routesUsers = require("../routes/users.js");
 const routesProducts = require("../routes/products.js");
 const routesCarts = require("../routes/carts.js");
 const routesAuth = require("../routes/auth.js");
+const routesPedidos = require("../routes/pedidos.js");
+const routesClientes = require("../routes/clientes.js")
 const morgan = require("morgan");
 //const session = require("express-session");
 //const sessionFilestore  = require("session-file-store")
 
-const fileStore = sessionFilestore(session)
+//const fileStore = sessionFilestore(session)
 
 const { dbConnection } = require("../database/config.js");
 
