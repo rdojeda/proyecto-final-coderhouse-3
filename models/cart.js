@@ -22,4 +22,10 @@ const CartSchema = Schema(
   }
 );
 
+CartSchema.methods.toJSON = function () {
+  const { __v, password, _id, ...cart } = this.toObject();
+  cart.uid = _id;
+  return cart;
+};
+
 module.exports = model("Cart", CartSchema);

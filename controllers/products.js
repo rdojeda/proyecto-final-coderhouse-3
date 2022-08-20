@@ -1,67 +1,140 @@
-const productsGetAll = async (req, res) => {
+const Product = require("../models/product");
+
+const multer = require("multer");
+const shortid = require("shortid");
+
+const configuracionMulter = {
+  storage: (fileStorage = multer.diskStorage({
+    destination: (req, file, cb) => {
+      cb(null, __dirname + "../../uploads/");
+    },
+    filename: (req, file, cb) => {
+      const extension = file.mimetype.split("/")[1];
+      cb(null, `${shortid.generate()}.${extension}`);
+    },
+  })),
+  fileFilter(req, file, cb) {
+    if (file.mimetype === "image/jpeg" || file.mimetype === "image/png") {
+      cb(null, true);
+    } else {
+      cb(new Error("Formato No válido"));
+    }
+  },
+};
+
+// pasar la configuración y el campo
+const upload = multer(configuracionMulter).single("imagen");
+
+// Sube un archivo
+const subirArchivo = (req, res, next) => {
+  upload(req, res, function (error) {
+    if (error) {
+      res.json({ mensaje: error });
+    }
+    return next();
+  });
+};
+
+// agrega nuevos productos
+const nuevoProducto = async (req, res, next) => {
+  const producto = new Product(req.body);
+
   try {
-    const products = await api.getAll();
-    products
-      ? res.status(200).json(products)
-      : res.status(404).json({ message: "No hay productos disponibles" });
-  } catch (err) {
-    res.status(500).json({ message: err.message });
+    if (req.file.filename) {
+      producto.imagen = req.file.filename;
+    }
+    await producto.save();
+    res.json({ mensaje: "Se agrego un nuevo producto" });
+  } catch (error) {
+    console.log(error);
+    next();
   }
 };
 
-const productsGet = async (req, res) => {
+// Muestra todos los productos
+const mostrarProductos = async (req, res, next) => {
   try {
-    const product = await api.getItem(req.params.id);
-    product
-      ? res.status(200).json(product)
-      : res
-          .status(404)
-          .json({ message: "Producto no encontrado. id: " + req.params.id });
-  } catch (err) {
-    res.status(500).json({ message: err.message });
+    // obtener todos los productos
+    const productos = await Product.find({});
+    res.json(productos);
+  } catch (error) {
+    console.log(error);
+    next();
   }
 };
 
-const productsPut = async (req, res) => {
+// Muestra un producto en especifico por su ID
+const mostrarProducto = async (req, res, next) => {
+  const producto = await Product.findById(req.params.idProducto);
+
+  if (!producto) {
+    res.json({ mensaje: "Ese Producto no existe" });
+    return next();
+  }
+
+  // Mostrar el producto
+  res.json(producto);
+};
+
+// Actualiza un producto via id
+const actualizarProducto = async (req, res, next) => {
   try {
-    const productUpdate = await api.update(req.params.id, req.body);
-    res.json({
-      message: "Producto actualizado correctamente",
-      id: productUpdate._id,
-    });
-  } catch (err) {
-    res.status(500).json({ message: err.message });
+    // construir un nuevo producto
+    let nuevoProducto = req.body;
+
+    // verificar si hay imagen nueva
+    if (req.file) {
+      nuevoProducto.imagen = req.file.filename;
+    } else {
+      let productoAnterior = await Product.findById(req.params.idProducto);
+      nuevoProducto.imagen = productoAnterior.imagen;
+    }
+
+    let producto = await Product.findOneAndUpdate(
+      { _id: req.params.idProducto },
+      nuevoProducto,
+      {
+        new: true,
+      }
+    );
+
+    res.json(producto);
+  } catch (error) {
+    console.log(error);
+    next();
   }
 };
 
-const productsPost = async (req, res) => {
+// Elimina un producto via ID
+const eliminarProducto = async (req, res, next) => {
   try {
-    const newProduct = await api.create(req.body);
-    res.status(201).json({
-      message: "Producto creado con éxito",
-      producto: newProduct,
-    });
-  } catch (err) {
-    res.status(500).json({ message: err.message });
+    await Product.findByIdAndDelete({ _id: req.params.idProducto });
+    res.json({ mensaje: "El Producto se ha eliminado" });
+  } catch (error) {
+    console.log(error);
+    next();
   }
 };
 
-const productsDelete = async (req, res) => {
+const buscarProducto = async (req, res, next) => {
   try {
-    const productDelete = await api.delete(req.params.id);
-    res.json({
-      message: "Producto borrado correctamente",
-      id: productDelete._id,
-    });
-  } catch (err) {
-    res.status(500).json({ message: err.message });
+    // obtener el query
+    const { query } = req.params;
+    const producto = await Product.find({ nombre: new RegExp(query, "i") });
+    res.json(producto);
+  } catch (error) {
+    console.log(error);
+    next();
   }
 };
+
 
 module.exports = {
-  productsGetAll,
-  productsGet,
-  productsPut,
-  productsPost,
-  productsDelete,
-};
+  subirArchivo,
+  nuevoProducto,
+  mostrarProductos,
+  mostrarProducto,
+  actualizarProducto,
+  eliminarProducto,
+  buscarProducto
+}

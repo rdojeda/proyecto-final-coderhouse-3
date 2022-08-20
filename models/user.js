@@ -20,30 +20,6 @@ const UserSchema = Schema({
     required: [true, "La contraseña es obligatoria"],
   },
 
-  year: {
-    type: Number,
-    trim: true,
-    maxlenght: 2,
-  },
-
-  shippingAddress: {
-    fullName: { type: String, trim: true },
-    address: { type: String, trim: true },
-    city: { type: String, trim: true },
-    country: { type: String, trim: true },
-  },
-
-  phone: {
-    type: String,
-    trim: true,
-    maxlenght: 11,
-  },
-
-  photo: {
-    type: String,
-    trim: true,
-  },
-
   role: {
     type: String,
     enum: ["ADMIN_ROLE", "USER_ROLE", "VENTAS_ROLE"]

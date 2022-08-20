@@ -12,8 +12,8 @@ const {
   usersGet,
   usersPut,
   usersPost,
-  usersDelete,
-  usersPatch,
+  usersDelete
+  
 } = require("../controllers/users.js");
 
 const router = Router();
@@ -54,6 +54,6 @@ router.delete(
   usersDelete
 );
 
-router.patch("/", usersPatch);
+
 
 module.exports = router;

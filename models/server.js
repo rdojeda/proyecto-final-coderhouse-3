@@ -5,8 +5,8 @@ const routesProducts = require("../routes/products.js");
 const routesCarts = require("../routes/carts.js");
 const routesAuth = require("../routes/auth.js");
 const morgan = require("morgan");
-const session = require("express-session");
-const sessionFilestore  = require("session-file-store")
+//const session = require("express-session");
+//const sessionFilestore  = require("session-file-store")
 
 const fileStore = sessionFilestore(session)
 
@@ -21,6 +21,9 @@ class Server {
     this.productsPath = "/api/products";
     this.cartsPath = "/api/carts";
     this.authPath = "/api/auth";
+    this.pedidosPath = "/api/pedidos";
+    this.clientesPath = "/api/clientes"
+
     //Conectar DB
     this.conectarDB();
     //Middlewares
@@ -49,8 +52,6 @@ class Server {
     //urlenconded express
     this.app.use(express.urlencoded({ extended: true }));
    
-  
-
   }
 
   routes() {
@@ -58,6 +59,8 @@ class Server {
     this.app.use(this.cartsPath, routesCarts);
     this.app.use(this.usersPath, routesUsers);
     this.app.use(this.productsPath, routesProducts);
+    this.app.use(this.pedidosPath, routesPedidos);
+    this.app.use(this.clientesPath, routesClientes);
   }
 
   // Ejecutando server
